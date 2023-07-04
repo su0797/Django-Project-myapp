@@ -85,7 +85,7 @@ class Write(LoginRequiredMixin, View):
         }
         return render(request, 'blog/post_form.html', context)
     
-    def post(self, request):
+    def post(self, request): # request ->HttpRequest 객체
         form = PostForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False) # commit=False 변수 할당만 우선 하고 이후에 수정가능
@@ -105,25 +105,51 @@ class Write(LoginRequiredMixin, View):
 #     context_object_name = 'post'
 
 
-class Update(UpdateView):
-    model = Post
-    template_name = 'blog/post_edit.html'
-    fields = ['title', 'content']
-    # success_url = reverse_lazy('blog:list')
+# class Update(UpdateView):
+#     model = Post
+#     template_name = 'blog/post_edit.html'
+#     fields = ['title', 'content']
+#     # success_url = reverse_lazy('blog:list')
 
-    # initial 기능 사용 -> form에 값을 미리 넣어주기 위해서 
-    def get_initial(self):
-        initial = super().get_initial()  # UpdateView(generic view)에서 제공하는 initial(딕셔너리)
-        post = self.get_object() # generic으로 만들면 상속 받는 것 / pk 기반으로 객체를 가져온다
-        initial['title'] = post.title
-        initial['content'] = post.content
-        return initial
+#     # initial 기능 사용 -> form에 값을 미리 넣어주기 위해서 
+#     def get_initial(self):
+#         initial = super().get_initial()  # UpdateView(generic view)에서 제공하는 initial(딕셔너리)
+#         post = self.get_object() # generic으로 만들면 상속 받는 것 / pk 기반으로 객체를 가져온다
+#         initial['title'] = post.title
+#         initial['content'] = post.content
+#         return initial
 
-    def get_success_url(self): # get_absolute_url 이것도 자주 씀
-        post = self.get_object() # pk 기반으로 현재 객체 가져오기
-        return reverse('blog:detail', kwargs={'pk' : post.pk})
+#     def get_success_url(self): # get_absolute_url 이것도 자주 씀
+#         post = self.get_object() # pk 기반으로 현재 객체 가져오기
+#         return reverse('blog:detail', kwargs={'pk' : post.pk})
     
-    
+
+class Update(View):
+    def get(self, request, pk): # post_id
+        post = Post.objects.get(pk=pk)
+        form = PostForm(initial={'title' : post.title, 'content' : post.content})
+        context = {
+            'form' : form,
+            'post' : post
+        }
+        return render(request, 'blog/post_edit.html', context)
+    def post(self, request, pk):
+        post = Post.objects.get(pk=pk)
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post.title = form.cleaned_data['title']
+            post.content = form.cleaned_data['content']
+            post.save()
+            return redirect('blog:detail', pk=pk)
+        
+        form.add_error('폼이 유효하지 않습니다.')
+        context = {
+            'form':form
+        }
+        return render(request, 'blog/post_edit.html', context)
+
+
+
 # class Delete(DeleteView):
 #     model = Post
 #     success_url = reverse_lazy('blog:list')
@@ -192,7 +218,7 @@ class CommentWrite(View):
         context = {
             'form' : form
         }
-        return render(request, 'blog/post_detail.html', content)
+        return render(request, 'blog/post_error.html', context)
         
 
 class CommentDelete(View):
@@ -212,15 +238,32 @@ class HashTagWrite(View):
     def post(self, request, pk): # 여기서 pk는 post의 pk(id) 값
         form  = HashTagForm(request.POST)
         if form.is_valid():
+            # 사용자에게 태그 내용을 받아옴
             name = form.cleaned_data['name']
+            # 해당 아이디에 해당하는 글 불러옴
             post = Post.objects.get(pk=pk)
-            hashtag = HashTag.objects.create(post=post, name=name)
+            # 유저 정보 가져오기
+            writer = request.user
+            # 댓글 객체 생성, create 매서드를 사용할 때는 save 필요 없음
+            hashtag = HashTag.objects.create(post=post, name=name, writer=writer)
+            # comment = Comment(post=post) -> comment.save()
             return redirect('blog:detail', pk=pk)
+        
+        form.add_error('폼이 유효하지 않습니다.')
+        context = {
+            'form' : form
+        }
+        return render(request, 'blog/post_error.html', context)
+        
         
 
 class HashTagDelete(View):
     def post(self, request, pk): # 해시태그의 pk(id)값
+        # 지울 객체를 찾아야 한다 -> 태그 객체
         hashtag = HashTag.objects.get(pk=pk)
+        # 상세페이지로 돌아가기
         post_id = hashtag.post.id
+        # 삭제
         hashtag.delete()
+        
         return redirect('blog:detail', pk=post_id)

@@ -24,7 +24,7 @@ class UserManager(BaseUserManager):
     # User모델의 username이 아니라 email을 id처럼 사용하기 위해서 email이 필수임을 체크합니다. -> 아닐시 오류를 발생시켜 유저 생성이 진행되지 않습니다.
         if not email:
             raise ValueError('User must have an email')
-        now = timezone.now() # User 테이블에 타입(class User(AbstractUser) 내부의 last_login, date_joined 필드)에 맞춰 현재 시각을 가져오기 위한 부분입니다. (데이터 타입: datetime)
+        now = timezone.localtime() # User 테이블에 타입(class User(AbstractUser) 내부의 last_login, date_joined 필드)에 맞춰 현재 시각을 가져오기 위한 부분입니다. (데이터 타입: datetime)
 
         email = self.normalize_email(email)
         # normalize_email은 BaseUserManager에서 제공하는 메서드로 정규화를 실행하는 메서드(함수)입니다.
