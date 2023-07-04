@@ -8,7 +8,7 @@ User = get_user_model()
 class Post(models.Model):
     title = models.CharField(max_length=30)
     content = models.TextField()
-    writer = models.ForeignKey(User, on_delete=models.CASCADE)
+    writer = models.ForeignKey(User, on_delete=models.CASCADE) # on_delete=models.CASCADE -> user가 삭제 되면 게시글도 연속 삭제됨
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

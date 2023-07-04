@@ -33,7 +33,17 @@ class Index(View):
         # print(post_objs) QuerySet<[post 1, 2, 3, 4, 5]>
         return render(request, 'blog/post_list.html', context)
 
-    
+'''
+class Index(LoginRequiredMixin, View):
+    def get(self, request):
+        # Post - User 연결 (Foreignkey)
+        # User를 이용해서 Post를 가지고 온다.
+        posts = Post.objects.filter(writer=request.user)
+        context = {
+            "posts" : posts
+        }
+        return render(request, 'blog/post_list.html', context)
+'''
 
 # write
 # post - form
@@ -81,7 +91,7 @@ class Write(LoginRequiredMixin, View):
             post = form.save(commit=False) # commit=False 변수 할당만 우선 하고 이후에 수정가능
             post.writer = request.user
             post.save() # 값이 할당되면 save
-            return redirect('blog:list')
+            return redirect('blog:list') # response -> HttpResponse 객체
         form.add_error(None, '폼이 유효하지 않습니다.')
         context = {
             'form': form
@@ -89,10 +99,10 @@ class Write(LoginRequiredMixin, View):
         return render(request, 'blog/post_form.html')
 
 
-class Detail(DetailView):
-    model = Post
-    template_name = 'blog/post_detail.html'
-    context_object_name = 'post'
+# class Detail(DetailView):
+#     model = Post
+#     template_name = 'blog/post_detail.html'
+#     context_object_name = 'post'
 
 
 class Update(UpdateView):
