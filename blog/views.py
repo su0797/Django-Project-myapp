@@ -124,9 +124,21 @@ class Update(UpdateView):
         return reverse('blog:detail', kwargs={'pk' : post.pk})
     
     
-class Delete(DeleteView):
-    model = Post
-    success_url = reverse_lazy('blog:list')
+# class Delete(DeleteView):
+#     model = Post
+#     success_url = reverse_lazy('blog:list')
+
+
+class Delete(View):
+    # 삭제페이지는 따로 보여줄 필요가 없기 때문에 post만 사용
+    def post(self, request, pk): # post_id
+        post = Post.objects.get(pk=pk)
+        post.delete()
+        return redirect('blog:list')
+    
+    # 클래스 자체에 아예 접근하지 못하게 -> LoginRequiredMixin
+    # Login만 되었을 때만 삭제 버튼이 보이게 
+
 
 
 class DetailView(View):
