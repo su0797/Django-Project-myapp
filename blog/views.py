@@ -181,10 +181,18 @@ class CommentWrite(View):
             content = form.cleaned_data['content']
             # 해당 아이디에 해당하는 글 불러옴
             post = Post.objects.get(pk=pk)
+            # 유저 정보 가져오기
+            writer = request.user
             # 댓글 객체 생성, create 메서드를 사용할 때는 save 필요없음
-            comment = Comment.objects.create(post = post, content = content)
-            # comment = Comment(post=post).
+            comment = Comment.objects.create(post = post, content = content, writer=writer)
+            # comment = Comment(post=post) -> comment.save()
             return redirect('blog:detail', pk=pk)
+        
+        form.add_error('폼이 유효하지 않습니다.')
+        context = {
+            'form' : form
+        }
+        return render(request, 'blog/post_detail.html', content)
         
 
 class CommentDelete(View):

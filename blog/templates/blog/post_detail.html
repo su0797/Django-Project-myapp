@@ -32,12 +32,13 @@
         {% for comment in comments %}
         <!-- 내용, 작성시간, 삭제 버튼 -->
             <li>{{ comment.content }} - {{ comment.created_at }}  
+                {% if comment.writer == request.user %}
                 <form action="{% url 'blog:cm-delete' pk=comment.pk %}" method="post">
                     {% csrf_token %}
                     <input type="submit" value="X" class="btn">
                 </form>
+                {% endif %}
             </li>
-
         {% endfor %}
     </ul>
 {% else %}
