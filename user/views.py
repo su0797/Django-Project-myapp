@@ -29,7 +29,7 @@ class Registration(View):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            return redirect('user:list')
+            return redirect('user:login')
         
 
 ### Login
