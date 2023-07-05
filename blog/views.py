@@ -202,11 +202,12 @@ class CommentWrite(View):
     #     pass
     def post(self, request, pk):
         form = CommentForm(request.POST)
+        # 해당 아이디에 해당하는 글 불러옴
+        post = Post.objects.get(pk=pk)
+
         if form.is_valid():
             # 사용자에게 댓글 내용을 받아옴
             content = form.cleaned_data['content']
-            # 해당 아이디에 해당하는 글 불러옴
-            post = Post.objects.get(pk=pk)
             # 유저 정보 가져오기
             writer = request.user
             # 댓글 객체 생성, create 메서드를 사용할 때는 save 필요없음
@@ -216,9 +217,10 @@ class CommentWrite(View):
         
         form.add_error('폼이 유효하지 않습니다.')
         context = {
-            'form' : form
+            'form' : form,
+            'post' : post
         }
-        return render(request, 'blog/post_error.html', context)
+        return render(request, 'blog/post_detail.html', context)
         
 
 class CommentDelete(View):

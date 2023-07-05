@@ -1,17 +1,17 @@
 {% extends 'blog/base.html' %}
 
 {% block content %}
-{% if form %}
-    <!-- 내용 추가 -->
-    {% comment %}
-        {% for errors in form.errors.values %}
-            {% for error in errors %}
-                {{ error }}
-            {% endfor %}
+
+<!-- form error -->
+{% comment %}
+    {% for errors in form.errors.values %}
+        {% for error in errors %}
+            {{ error }}
         {% endfor %}
-    {% endcomment %}
-    {% include 'blog/form_error.html' %}
-{% else %}
+    {% endfor %}
+{% endcomment %}
+{% include 'blog/form_error.html' %}
+
     <h2>제목: {{ post.title }}</h2>
 
     {% if post.writer == request.user %}
@@ -81,6 +81,6 @@
     <br>
     <p>해시태그가 없습니다.</p>
     {% endif %}
-{% endif %}
+
 
 {% endblock %}
