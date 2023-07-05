@@ -28,7 +28,8 @@ class Index(View):
         post_objs = Post.objects.all()
         # context = 데이터베이스에서 가져온 값
         context = {
-            "posts": post_objs
+            "posts": post_objs,
+            'title': 'Blog'
         }
         # print(post_objs) QuerySet<[post 1, 2, 3, 4, 5]>
         return render(request, 'blog/post_list.html', context)
@@ -77,11 +78,15 @@ class Index(LoginRequiredMixin, View):
 #     success_url = reverse_lazy('blog:list') # 성공시 보내줄 url
 
 class Write(LoginRequiredMixin, View):
-    # Mixin: LoginRequiredMixin 별도의 클래스로 정의됨
+    # Mixin: LoginRequiredMixin 별도의 클래스로 정의됨 -> 로그인 안 한 사용자가 /login
+    login_url = '/user/login'
+    # redirect_fields_name = 'next'
+    
     def get(self, request):
         form = PostForm()
         context = {
-            'form': form
+            'form': form,
+            'title': 'Blog'
         }
         return render(request, 'blog/post_form.html', context)
     
@@ -130,7 +135,8 @@ class Update(View):
         form = PostForm(initial={'title' : post.title, 'content' : post.content})
         context = {
             'form' : form,
-            'post' : post
+            'post' : post,
+            'title': 'Blog'
         }
         return render(request, 'blog/post_edit.html', context)
     def post(self, request, pk):
@@ -144,7 +150,8 @@ class Update(View):
         
         form.add_error('폼이 유효하지 않습니다.')
         context = {
-            'form':form
+            'form':form,
+            'title': 'Blog'
         }
         return render(request, 'blog/post_edit.html', context)
 
@@ -190,7 +197,8 @@ class DetailView(View):
             'comments' : comments,
             'hashtags' : hashtags,
             'comment_form' : comment_form,
-            'hashtag_form' : hashtag_form
+            'hashtag_form' : hashtag_form,
+            'title': 'Blog'
         }
 
         return render(request, 'blog/post_detail.html', context)
@@ -216,11 +224,13 @@ class CommentWrite(View):
             return redirect('blog:detail', pk=pk)
         
         form.add_error('폼이 유효하지 않습니다.')
+        hashtag_form = HashTagForm()
         context = {
-            'form' : form,
-            'post' : post
+            'comment_form' : form,
+            'post' : post,
+            'title': 'Blog'
         }
-        return render(request, 'blog/post_detail.html', context)
+        return render(request, 'blog/post_detail_error.html', context)
         
 
 class CommentDelete(View):
@@ -253,9 +263,10 @@ class HashTagWrite(View):
         
         form.add_error('폼이 유효하지 않습니다.')
         context = {
-            'form' : form
+            'form' : form,
+            'title': 'Blog'
         }
-        return render(request, 'blog/post_error.html', context)
+        return render(request, 'blog/post_detail_error.html', context)
         
         
 
