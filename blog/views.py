@@ -85,6 +85,9 @@ class Write(LoginRequiredMixin, View):
 
 
     def get(self, request):
+        # next_path = request.GET.get('next')
+        # next_url = request.GET.get(self.redirect_field_name)
+
         form = PostForm()
         context = {
             'form': form,
@@ -133,8 +136,11 @@ class Write(LoginRequiredMixin, View):
 
 class Update(View):
     def get(self, request, pk): # post_id
-        post = Post.objects.get(pk=pk) # <Object: post>
+        try:
+            post = Post.objects.get(pk=pk) # <Object: post>
         # get()은 해당 조건이 없을때 오류를 발생시킨다
+        except ObjectDoesNotExist as e:
+            print('Post does not exist.', str(e))
         form = PostForm(initial={'title' : post.title, 'content' : post.content})
         context = {
             'form' : form,
@@ -142,8 +148,13 @@ class Update(View):
             'title': 'Blog'
         }
         return render(request, 'blog/post_edit.html', context)
+    
     def post(self, request, pk):
-        post = Post.objects.get(pk=pk)
+        # try, except
+        try: 
+            post = Post.objects.get(pk=pk)
+        except ObjectDoesNotExist as e:
+            print('Post does not exist.', str(e))
         form = PostForm(request.POST)
         if form.is_valid():
             post.title = form.cleaned_data['title']

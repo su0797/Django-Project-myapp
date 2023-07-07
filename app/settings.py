@@ -18,6 +18,7 @@ AUTH_USER_MODEL = 'user.User'
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
 # Login URL
 LOGIN_URL = '/user/login'
 
@@ -25,7 +26,7 @@ LOGIN_URL = '/user/login'
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-fe157#)r*hr9q!6!j7#xc$c%_oi4q*amf+=6t+csl6tw7#o45m'
+SECRET_KEY = 'django-insecure-9@o$2xraddb1(&2zw%pzgj^fyjd(vixj0#&^u4(=kj**+^^x56'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,8 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework', # 수정 
-    'blog', # 내가 만든 앱 추가
+    'rest_framework', # 수정
+    'blog', # 내가 만든 앱을 추가
     'user',
 ]
 
@@ -111,7 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'ko-kr' #  한국어
+LANGUAGE_CODE = 'ko-kr'  # 한국어
 
 TIME_ZONE = 'Asia/Seoul' # 한국 시간
 
