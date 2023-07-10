@@ -196,7 +196,17 @@ class DetailView(View):
         # 데이터베이스 방문
         # 해당 글
         # 장고 ORM (pk: 무조건 pk로 작성해야한다.)
-        post = Post.objects.get(pk=pk)
+
+        # 글
+        # Object.objects.prefetch_related('역참조필드_set').get(조건)
+        post = Post.objects.prefetch_related('comment_set', 'hashtag_set').get(pk=pk)
+        
+        comments = post.comment_set.all()
+        hashtags = post.hashtag_set.all()
+        print(comments)
+        print(hashtags)
+        print(post)
+        
         # # 댓글
         # comments = Comment.objects.filter(post=post)
         # # 해시태그
