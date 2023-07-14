@@ -6,11 +6,12 @@
 {% if form.errors %}
     {% include 'blog/form_error.html' %}
 {% else %}
-    {% trans "welcom!" %}
+    {% trans 'Welcome!' %}
     <form action="{% url 'blog:edit' pk=post.pk %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="수정">
+        <input type="submit" value="{% trans 'Edit' %}">
     </form>
 {% endif %}
+
 {% endblock %}
